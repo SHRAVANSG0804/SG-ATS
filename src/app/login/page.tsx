@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/LoginForm";
 import { signedInAccounts } from "@/lib/session";
-import { readDb } from "@/lib/store";
+import { readDb, EPHEMERAL_STORAGE } from "@/lib/store";
 import { DEFAULT_PASSWORD } from "@/lib/seed";
 import { ROLE_LABEL } from "@/lib/domain";
 
@@ -25,6 +25,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-500 font-bold">M</span>
           <span className="text-lg font-semibold">Meridian ATS</span>
         </Link>
+        {EPHEMERAL_STORAGE && (
+          <p className="mb-4 rounded-lg bg-rose-500/15 px-4 py-2.5 text-center text-xs text-rose-200">
+            Demo deployment: data is temporary and may reset. Do not enter real candidate data.
+          </p>
+        )}
         <div className="card p-6 sm:p-8">
           <h1 className="text-xl font-semibold">{adding ? "Add another account" : "Sign in"}</h1>
           <p className="mt-1 mb-6 text-sm text-slate-500">

@@ -1,6 +1,7 @@
 import "server-only";
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { randomUUID } from "node:crypto";
 import type { DB } from "./domain";
 import { buildSeed, defaultCredentials } from "./seed";
@@ -13,7 +14,14 @@ import { buildSeed, defaultCredentials } from "./seed";
  * module for Supabase (schema in /supabase/schema.sql) does not touch the UI.
  */
 
-const DATA_DIR = process.env.ATS_DATA_DIR ?? path.join(process.cwd(), ".data");
+// Vercel's deployment folder is read-only; /tmp is the only writable place there. It is
+// per-server-instance and wiped when the instance restarts, so it is a demo stopgap until Supabase.
+const ON_VERCEL = !!process.env.VERCEL;
+const DATA_DIR =
+  process.env.ATS_DATA_DIR ?? (ON_VERCEL ? path.join(os.tmpdir(), "meridian-ats") : path.join(process.cwd(), ".data"));
+
+/** True when data may be lost at any time (serverless /tmp). The UI shows a warning. */
+export const EPHEMERAL_STORAGE = ON_VERCEL && !process.env.ATS_DATA_DIR;
 const DATA_FILE = path.join(DATA_DIR, "db.json");
 
 // Next.js can load this module more than once (e.g. once for pages, once for server actions),

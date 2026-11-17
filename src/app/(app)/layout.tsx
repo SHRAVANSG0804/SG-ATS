@@ -3,6 +3,7 @@ import { NavLinks } from "@/components/NavLinks";
 import { AccountMenu } from "@/components/AccountMenu";
 import { currentUser, isHead, mustChangePassword, signedInAccounts } from "@/lib/session";
 import { resetDemoData } from "@/lib/actions";
+import { EPHEMERAL_STORAGE } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
       <main className="min-w-0 flex-1 p-4 md:p-8">
+        {EPHEMERAL_STORAGE && (
+          <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm text-rose-800">
+            <b>Demo mode:</b> this deployment stores data temporarily, so changes can disappear when the server restarts.
+            Do not enter real candidate data until the database (Supabase) is connected.
+          </div>
+        )}
         {mustChangePassword(user.id) && (
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-brand-100 bg-brand-50 px-4 py-2.5 text-sm text-brand-700">
             <span>You are using a temporary password. Please set your own.</span>
