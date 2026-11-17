@@ -23,7 +23,7 @@ Use the **Switch user** box in the sidebar to test as Head of TA, a Recruiter or
 | "I think we lose a third between offer and joining" | Dashboard **offer drop-out rate** with drop-out reason codes |
 | Notice period decides everything | Every candidate card is flagged red when notice > days left until the job's target closure |
 | Which source actually works? | Source effectiveness: volume → interviews → offers → joins, plus consultancy fees (8.33%) |
-| DPDP Act | Consent is mandatory on create; retention deadline (24 months) stored per candidate |
+| DPDP Act | Consent is mandatory on create; retention deadline (12 months) stored per candidate |
 
 ## Scope delivered (Phase 1)
 

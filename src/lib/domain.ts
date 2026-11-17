@@ -57,7 +57,7 @@ export const ROLE_LABEL: Record<Role, string> = {
 };
 
 // DPDP Act: candidate data is retained only for a bounded period after last activity.
-export const RETENTION_MONTHS = 24;
+export const RETENTION_MONTHS = 12;
 
 export interface User {
   id: string;
