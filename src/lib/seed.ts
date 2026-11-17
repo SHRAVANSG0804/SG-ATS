@@ -1,5 +1,14 @@
 import type { Application, Candidate, DB, Job, Note, Source, Stage, StageEvent } from "./domain";
 import { CONSULTANCIES, RETENTION_MONTHS, STAGES } from "./domain";
+import { hashPassword } from "./password";
+
+/** Starting password for the seeded accounts. Everyone is asked to change it on first sign-in. */
+export const DEFAULT_PASSWORD = "Meridian@2026";
+
+export function defaultCredentials(userIds: string[]) {
+  const now = new Date().toISOString();
+  return userIds.map((userId) => ({ userId, passwordHash: hashPassword(DEFAULT_PASSWORD), mustChangePassword: true, updatedAt: now }));
+}
 
 // Fictional demo data shaped like Meridian's real hiring: client-linked roles,
 // bench hiring, Indian CTC/notice-period norms, and mixed sources.
@@ -15,13 +24,13 @@ const addMonths = (iso: string, m: number) => {
 
 export function buildSeed(): DB {
   const users = [
-    { id: "u-head", name: "Anjali Deshpande", email: "anjali@meridian.example", role: "head" as const },
-    { id: "u-r1", name: "Rohit Kulkarni", email: "rohit@meridian.example", role: "recruiter" as const },
-    { id: "u-r2", name: "Sneha Iyer", email: "sneha@meridian.example", role: "recruiter" as const },
-    { id: "u-r3", name: "Faisal Shaikh", email: "faisal@meridian.example", role: "recruiter" as const },
-    { id: "u-r4", name: "Priya Naik", email: "priya@meridian.example", role: "recruiter" as const },
-    { id: "u-hm1", name: "Vikram Joshi", email: "vikram@meridian.example", role: "hiring_manager" as const },
-    { id: "u-hm2", name: "Meera Rao", email: "meera@meridian.example", role: "hiring_manager" as const },
+    { id: "u-head", name: "Anjali Deshpande", email: "anjali@meridian.example", role: "head" as const, active: true },
+    { id: "u-r1", name: "Rohit Kulkarni", email: "rohit@meridian.example", role: "recruiter" as const, active: true },
+    { id: "u-r2", name: "Sneha Iyer", email: "sneha@meridian.example", role: "recruiter" as const, active: true },
+    { id: "u-r3", name: "Faisal Shaikh", email: "faisal@meridian.example", role: "recruiter" as const, active: true },
+    { id: "u-r4", name: "Priya Naik", email: "priya@meridian.example", role: "recruiter" as const, active: true },
+    { id: "u-hm1", name: "Vikram Joshi", email: "vikram@meridian.example", role: "hiring_manager" as const, active: true },
+    { id: "u-hm2", name: "Meera Rao", email: "meera@meridian.example", role: "hiring_manager" as const, active: true },
   ];
 
   const clients = [
@@ -186,5 +195,5 @@ export function buildSeed(): DB {
     { id: "n-3", candidateId: "cand-3", applicationId: null, body: "Notice is 90 days but says buy-out possible up to 45 days. Confirm with HR.", authorId: "u-r3", at: ago(4) },
   ];
 
-  return { users, clients, jobs, candidates, applications, stageEvents, notes, counters: { job: jobs.length } };
+  return { users, credentials: defaultCredentials(users.map((u) => u.id)), sessions: [], clients, jobs, candidates, applications, stageEvents, notes, counters: { job: jobs.length } };
 }

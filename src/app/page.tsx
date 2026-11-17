@@ -17,8 +17,8 @@ export default function Landing() {
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand-500 text-sm font-bold">M</span>
           <span className="font-semibold">Meridian ATS</span>
         </div>
-        <Link href="/dashboard" className="btn-primary">
-          Open app →
+        <Link href="/login" className="btn-primary">
+          Sign in →
         </Link>
       </header>
       <section className="mx-auto max-w-6xl px-6 pt-16 pb-20">

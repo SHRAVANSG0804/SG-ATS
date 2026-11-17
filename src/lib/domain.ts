@@ -64,6 +64,22 @@ export interface User {
   name: string;
   email: string;
   role: Role;
+  active: boolean;
+}
+
+/** Login secrets live apart from User so a User object can be passed to the browser safely. */
+export interface Credential {
+  userId: string;
+  passwordHash: string;
+  mustChangePassword: boolean;
+  updatedAt: string;
+}
+
+export interface Session {
+  tokenHash: string; // sha256 of the cookie token – the raw token is never stored
+  userId: string;
+  createdAt: string;
+  expiresAt: string;
 }
 
 export interface Client {
@@ -151,6 +167,8 @@ export interface Note {
 
 export interface DB {
   users: User[];
+  credentials: Credential[];
+  sessions: Session[];
   clients: Client[];
   jobs: Job[];
   candidates: Candidate[];

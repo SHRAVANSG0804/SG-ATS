@@ -1,10 +1,9 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { mutate, newId, nowIso, resetDb } from "./store";
-import { SESSION_COOKIE, canEdit, currentUser } from "./session";
+import { canEdit, currentUser } from "./session";
 import { findDuplicates } from "./queries";
 import {
   ALL_STAGES,
@@ -32,11 +31,6 @@ async function requireEditor() {
 }
 
 export type FormState = { error?: string; duplicates?: ReturnType<typeof findDuplicates> } | undefined;
-
-export async function switchUser(formData: FormData) {
-  (await cookies()).set(SESSION_COOKIE, str(formData, "userId"), { path: "/", httpOnly: true, sameSite: "lax" });
-  revalidatePath("/", "layout");
-}
 
 export async function createJob(_: FormState, formData: FormData): Promise<FormState> {
   const user = await requireEditor();
@@ -230,6 +224,7 @@ export async function addNote(formData: FormData) {
 export async function resetDemoData() {
   const user = await currentUser();
   if (user.role !== "head") throw new Error("Only the Head of TA can reset data.");
-  resetDb();
-  revalidatePath("/", "layout");
+  if (process.env.NODE_ENV === "production") throw new Error("Demo reset is disabled in production.");
+  resetDb(); // also clears all sessions, so everyone signs in again
+  redirect("/login");
 }

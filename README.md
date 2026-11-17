@@ -10,9 +10,30 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-No accounts or keys needed for Phase 1: data is stored in `.data/db.json` and seeded with demo data on first run.
-Use the **Switch user** box in the sidebar to test as Head of TA, a Recruiter or a Hiring Manager.
-"Reset demo data" (Head of TA only) restores the seed.
+Data is stored in `.data/db.json` and seeded on first run. No external keys are needed.
+
+## Signing in
+
+Everyone signs in with **their own work email and password**.
+
+| Seeded account | Role |
+|---|---|
+| anjali@meridian.example | Head of TA (can manage the team) |
+| rohit@ / sneha@ / faisal@ / priya@meridian.example | Recruiters |
+| vikram@ / meera@meridian.example | Hiring managers |
+
+Starting password for all seeded accounts: `Meridian@2026`. Each user is prompted to change it.
+**Change these before any real use / deployment.**
+
+- **Team page** (Head of TA): create accounts for new recruiters and hiring managers with their email and a temporary password
+  (typed or auto-generated), change roles, reset passwords, deactivate/reactivate access.
+- **Account switcher** (sidebar, bottom): stay signed in to up to 5 accounts in one browser, switch between them
+  without re-typing passwords, add another account, sign out of one or all.
+- **Account & password**: every user can change their own password (8+ chars, letter + number).
+
+Security: passwords hashed with scrypt; session tokens are random, stored only as SHA-256 hashes, in httpOnly/SameSite cookies
+(Secure in production), expire after 7 days; 5 failed sign-ins lock that email for 15 minutes; changing or resetting a password
+signs that account out on other devices; deactivating a user ends their sessions immediately.
 
 ## The problem (from the client brief)
 
@@ -33,13 +54,14 @@ stage movement forward/back with timestamped history · duplicate detection · n
 
 **Should have — done:** skill-based search & filters (skills, notice, experience, source) · recruiter assignment per job · reject/drop reason codes · basic dashboard (open positions, stage funnel, time-to-fill, overdue roles, recruiter workload).
 
-**Roles:** Head of TA & Recruiters edit; Hiring Managers are read-only but can add notes.
+**Roles & access:** email + password sign-in for every user · multi-account switcher · team management by Head of TA.
+Head of TA & Recruiters edit; Hiring Managers are read-only but can add notes.
 
 ## Roadmap
 
 | Phase | Items |
 |---|---|
-| 2 – Platform | Clerk login (replace demo switcher) · Supabase Postgres (`supabase/schema.sql` ready) · resume upload to Supabase Storage bucket `resumes` · deploy to Vercel |
+| 2 – Platform | Optional: move sign-in to Clerk or Supabase Auth (adds email-based password reset) · Supabase Postgres (`supabase/schema.sql` ready) · resume upload to Supabase Storage bucket `resumes` · deploy to Vercel |
 | 3 – Workflow | Interview scheduling (panel, time, client round) · offer details (offered CTC, joining date) · email from app via Resend (application confirmation, interview invite) |
 | 4 – Could have | Candidate self-service portal · email templates · consultancy commission report · client-facing status report · bulk resume import · offer-drop risk flag · audit log · DPDP auto-purge |
 | Won't have (v1) | Payroll · onboarding · performance management · AI features |
@@ -50,7 +72,7 @@ stage movement forward/back with timestamped history · duplicate detection · n
 Browser → Next.js 15 (App Router, Server Actions) → data layer (src/lib/store.ts)
                                                      ├─ Phase 1: JSON file (.data/)
                                                      └─ Phase 2: Supabase Postgres + Storage
-Auth: demo cookie (Phase 1) → Clerk (Phase 2)   Email: Resend (Phase 3)   Hosting: Vercel
+Auth: email + password, server sessions (built in)   Email: Resend (Phase 3)   Hosting: Vercel
 ```
 
 Key files: `src/lib/domain.ts` (types & business rules), `src/lib/queries.ts` (reads, dashboard maths),
