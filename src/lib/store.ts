@@ -4,7 +4,7 @@ import path from "node:path";
 import os from "node:os";
 import { randomUUID } from "node:crypto";
 import type { DB } from "./domain";
-import { buildSeed, defaultCredentials } from "./seed";
+import { buildSeed, defaultCredentials, ensureDemoAccounts } from "./seed";
 
 /**
  * Local development data store.
@@ -59,6 +59,7 @@ function migrate(db: DB): boolean {
     db.sessions = [];
     changed = true;
   }
+  if (ensureDemoAccounts(db)) changed = true;
   return changed;
 }
 

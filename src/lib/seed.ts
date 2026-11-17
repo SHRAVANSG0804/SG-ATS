@@ -5,6 +5,27 @@ import { hashPassword } from "./password";
 /** Starting password for the seeded accounts. Everyone is asked to change it on first sign-in. */
 export const DEFAULT_PASSWORD = "Meridian@2026";
 
+/**
+ * Built-in demo logins requested by the client. Short passwords are deliberate for demos;
+ * the 8-character policy applies to passwords people set themselves. Remove before real use.
+ */
+export const DEMO_ACCOUNTS = [
+  { id: "u-you1", name: "Demo Manager", email: "you1@mardian.com", role: "head" as const, password: "1223" },
+  { id: "u-you2", name: "Demo Employee", email: "you2@mardian.com", role: "recruiter" as const, password: "1332" },
+];
+
+/** Adds any missing demo account (user + credential) to the database. Returns true if something was added. */
+export function ensureDemoAccounts(db: Pick<DB, "users" | "credentials">): boolean {
+  let added = false;
+  for (const a of DEMO_ACCOUNTS) {
+    if (db.users.some((u) => u.id === a.id || u.email.toLowerCase() === a.email)) continue;
+    db.users.push({ id: a.id, name: a.name, email: a.email, role: a.role, active: true });
+    db.credentials.push({ userId: a.id, passwordHash: hashPassword(a.password), mustChangePassword: false, updatedAt: new Date().toISOString() });
+    added = true;
+  }
+  return added;
+}
+
 export function defaultCredentials(userIds: string[]) {
   const now = new Date().toISOString();
   return userIds.map((userId) => ({ userId, passwordHash: hashPassword(DEFAULT_PASSWORD), mustChangePassword: true, updatedAt: now }));
@@ -195,5 +216,7 @@ export function buildSeed(): DB {
     { id: "n-3", candidateId: "cand-3", applicationId: null, body: "Notice is 90 days but says buy-out possible up to 45 days. Confirm with HR.", authorId: "u-r3", at: ago(4) },
   ];
 
-  return { users, credentials: defaultCredentials(users.map((u) => u.id)), sessions: [], clients, jobs, candidates, applications, stageEvents, notes, counters: { job: jobs.length } };
+  const seeded = { users: [...users] as DB["users"], credentials: defaultCredentials(users.map((u) => u.id)) };
+  ensureDemoAccounts(seeded);
+  return { users: seeded.users, credentials: seeded.credentials, sessions: [], clients, jobs, candidates, applications, stageEvents, notes, counters: { job: jobs.length } };
 }

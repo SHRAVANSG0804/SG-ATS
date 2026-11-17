@@ -16,6 +16,17 @@ Data is stored in `.data/db.json` and seeded on first run. No external keys are 
 
 Everyone signs in with **their own work email and password**.
 
+**Quick demo logins** (always available, also on the Vercel demo):
+
+| Email | Password | Role |
+|---|---|---|
+| you1@mardian.com | 1223 | Head of TA (manager – full access incl. Team page) |
+| you2@mardian.com | 1332 | Recruiter (employee) |
+
+These short passwords are for demos only – remove `DEMO_ACCOUNTS` in `src/lib/seed.ts` before real use.
+
+Other seeded accounts:
+
 | Seeded account | Role |
 |---|---|
 | anjali@meridian.example | Head of TA (can manage the team) |
