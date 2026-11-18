@@ -28,7 +28,7 @@ The app was built with Claude Code (Anthropic) acting as a pair-programming agen
 - **Evidence:** 9 of the 10 commits carry a `Co-Authored-By: Claude` trailer and a `Claude-Session` link. The other commit is the create-next-app scaffold.
 - **Inputs:** the lab manual PDF, the client requirements document (`ATS_Requirement.docx`), and the student's instructions in chat.
 - **Tools the agent used:** file read/write, shell (npm, git, Postgres), and a headless browser (Playwright) for testing and screenshots.
-- **Instruction design:** the student's prompts named the technology, users and features, and asked for one feature at a time (lab manual §6).
+- **Instruction design:** the first prompt gave the agent the two documents, asked it to act professionally, build the ATS to those preferences and ask what to do next. Later prompts each asked for one change: real email/password logins with account switching, fixing the Vercel crash, and specific demo accounts.
 - **Output:** code, documentation, tests and commits pushed to GitHub.
 - **Human review / override points:**
   - The student chose the next phase, the retention period (12 months) and the demo accounts.
