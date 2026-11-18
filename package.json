@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:e2e": "node tests/e2e/features.e2e.js && node tests/e2e/auth.e2e.js"
   },
   "dependencies": {
     "next": "15.5.29",
