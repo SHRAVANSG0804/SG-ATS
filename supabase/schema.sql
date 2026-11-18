@@ -7,14 +7,29 @@ create type hiring_type as enum ('Project', 'Bench');
 create type stage as enum ('Applied','Screened','Internal Interview','Client Round','Offered','BGV','Joined','Rejected','Dropped Out');
 create type source as enum ('Naukri','LinkedIn','Referral','Consultancy','Direct');
 
-create table app_users (               -- "Recruiters" + hiring managers + head; linked to Clerk
+create table app_users (               -- Head of TA, recruiters and hiring managers (staff who sign in)
   id            uuid primary key default gen_random_uuid(),
-  clerk_user_id text unique,
   name          text not null,
   email         text not null unique,
   role          user_role not null default 'recruiter',
+  active        boolean not null default true,      -- deactivated users cannot sign in
   created_at    timestamptz not null default now()
 );
+
+create table credentials (             -- login secret kept apart from the profile (1:1 with app_users)
+  user_id              uuid primary key references app_users(id) on delete cascade,
+  password_hash        text not null,              -- scrypt$N$salt$hash (src/lib/password.ts)
+  must_change_password boolean not null default true,
+  updated_at           timestamptz not null default now()
+);
+
+create table sessions (                -- one row per signed-in browser account (src/lib/session.ts)
+  token_hash  char(64) primary key,                -- SHA-256 of the cookie token; raw token never stored
+  user_id     uuid not null references app_users(id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  expires_at  timestamptz not null
+);
+create index sessions_user_idx on sessions (user_id);
 
 create table clients (
   id      uuid primary key default gen_random_uuid(),
